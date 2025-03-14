@@ -1,0 +1,42 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master  # Trigger the workflow on pushes to the 'main' branch (or change to your branch)
+    paths:
+      - '**/*'  # Trigger the workflow on changes to any files in the repository
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # Specify the Node.js version you want to use
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the Vite project
+      - name: Build the project
+        run: npm run build
+
+      # Deploy to the /docs folder
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # Branch where the built files will be deployed
+          folder: dist      # Vite generates the output in the 'dist' folder by default
+          target-folder: docs  # Move the built files to the 'docs' folder
+          clean: true       # Clean the target folder before deploying
+
+  # Optional: You can add additional steps here like testing or linting if needed.
